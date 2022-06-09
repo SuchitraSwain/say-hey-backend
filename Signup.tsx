@@ -40,31 +40,26 @@ const Signup = () => {
           }}
           
           onSubmit={(values) => { 
-            var InsertAPIURL = "http://192.168.29.159:19000/backend/signup.php";   //API to render signup
-
-            // var headers = {
-              
-            //   'Accept': 'application/json',
-            //   'Content-Type': 'application/json'
-              
-            // };
-            
-            var Data ={
-              fname :values.firstName,
-              lname: values.lastName,
-              u_email: values.email,
-              u_mno: values.mobileNumber,
-              u_pass: values.password
-              
-            };
-            fetch(InsertAPIURL,{
-              method:'POST',
-              headers: {
+            var InsertAPIURL = "http://192.168.29.159/say-hey-application/backend/signup.php";   //API to render signup
+            var headers = {
               
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
+              
+              };
+              
+              var Data ={
+                fname :values.firstName,
+                lname: values.lastName,
+                u_email: values.email,
+                u_mno: values.mobileNumber,
+                u_pass: values.password
                 
-              },
+              };
+              console.log(Data);
+            fetch(InsertAPIURL,{
+              method:'POST',
+              headers: headers,
               body: JSON.stringify(Data) //convert data to JSON
           })
           .then((response)=>response.json()) //check response type of API (CHECK OUTPUT OF DATA IS IN JSON)
@@ -116,6 +111,7 @@ const Signup = () => {
                   layout="first"
                   containerStyle={styles.phoneContainer}
                   textContainerStyle={styles.numberInput}
+                  
                   onChangeFormattedText={(text) => {
                     values.mobileNumber = text;
                   }}

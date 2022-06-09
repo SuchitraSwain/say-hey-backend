@@ -1,7 +1,7 @@
 <?php
 include('db.php');
 $FNAME = $decodedData['fname'];
-$USERMNO = $decodedData['u_mo'];
+$USERMNO = $decodedData['u_mno'];
 $LNAME = $decodedData['lname'];
 $UserEmail = $decodedData['u_email'];
 $UserPW = ($decodedData['u_pass']); //password is hashed
@@ -15,7 +15,7 @@ if ($checkmno != 0) {
 } else {
 
     $InsertQuerry = "INSERT INTO `registers`( `fname`, `lname`, `u_email`, `u_mno`, `u_pass`) 
-    VALUES ('$FNAME','$LNAME','$UserEmail','$SERMNO','$UserPW')";
+    VALUES ('$FNAME','$LNAME','$UserEmail','$USERMNO','$UserPW')";
 
     $R = mysqli_query($conn, $InsertQuerry);
 
