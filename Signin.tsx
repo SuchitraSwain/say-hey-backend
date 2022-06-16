@@ -12,7 +12,7 @@ import {
 import { COLORS, FONTS, SHADOWS } from "../constants";
 import PhoneInput from "react-native-phone-number-input";
 
-const SignIn = () => {
+const SignIn = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -29,7 +29,7 @@ const SignIn = () => {
             mobileNumber: "",
           }}
           onSubmit={(values) => {
-            var InsertAPIURL = "http://192.168.29.159/say-hey-application/backend/signin.php";   //API to render signup
+            var InsertAPIURL = "https://sayhey.co.in/backendmobile/signin.php";   //API to render signup
             var headers = {
 
               'Accept': 'application/json',
@@ -45,13 +45,22 @@ const SignIn = () => {
               headers: headers,
               body: JSON.stringify(Data) //convert data to JSON
             })
-              .then((response) => response.json()) //check response type of API (CHECK OUTPUT OF DATA IS IN JSON)
-              .then((response) => {
-                // alert(response[0].Message);       // If data is in JSON => Display alert msg
-                console.log(response[0].Message);
-                 
-              })
+            .then((response) => response.json()) //check response type of API (CHECK OUTPUT OF DATA IS IN JSON)
+            .then((response) => {
+              alert(response[0].Message);       // If data is in JSON => Display alert msg
               
+                console.log(values.mobileNumber);
+                
+                // alert("Hello");
+                if (response[0].Message == "Success ") {
+                  console.log(response[0].Message);
+                  navigation.navigate("verify");
+                }
+
+
+
+              })
+
               .catch((error) => {
                 // alert("Error Occured" + error);
                 console.log("Error Occured" + error);
@@ -63,6 +72,9 @@ const SignIn = () => {
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <View style={{ marginTop: 25 }}>
               <PhoneInput
+                onChangeFormattedText={(text) => {
+                  values.mobileNumber = text;
+                }}
                 value={values.mobileNumber}
                 defaultCode="IN"
                 layout="first"

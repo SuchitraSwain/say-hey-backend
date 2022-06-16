@@ -14,7 +14,7 @@ import Checkbox from "expo-checkbox";
 import { COLORS, FONTS, SHADOWS } from "../constants";
 import PhoneInput from "react-native-phone-number-input";
 
-const Signup = () => {
+const Signup = ({ navigation }: any) => {
   const [isSelected, setSelection] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
@@ -40,7 +40,7 @@ const Signup = () => {
           }}
           
           onSubmit={(values) => { 
-            var InsertAPIURL = "http://192.168.29.159/say-hey-application/backend/signup.php";   //API to render signup
+            var InsertAPIURL = "https://sayhey.co.in/backendmobile/signup.php";   //API to render signup
             var headers = {
               
                 'Accept': 'application/json',
@@ -64,7 +64,14 @@ const Signup = () => {
           })
           .then((response)=>response.json()) //check response type of API (CHECK OUTPUT OF DATA IS IN JSON)
           .then((response)=>{
-            alert(response[0].Message);       // If data is in JSON => Display alert msg
+            alert(response[0].Message);
+            if (response[0].Message == "Complete--!") {
+              navigation.navigate("signin");
+              alert("account registered");
+            }
+            else{
+              alert(response[0].Message);
+            }       // If data is in JSON => Display alert msg
            
           })
           .catch((error)=>{

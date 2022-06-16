@@ -2,7 +2,7 @@
 include('db.php');
 require "../vendor/autoload.php";
 use \Firebase\JWT\JWT;
-$UserMno =$_POST['u_mno'];
+$UserMno =$decodedData['u_mno'];
 
 $SQL = "SELECT * FROM registers WHERE u_mno ='$UserMno'";
 $exeSQL = mysqli_query($conn, $SQL);
@@ -19,12 +19,13 @@ if ($checkMno != 0) {
             'u_id'=> $row['srno'],
             'u_mno' => $row['u_mno']
         )];
+        // $Message = "Success ";
         $jwt = JWT::encode($token, $secret_key,'HS256');
         $response[]= json_encode(
             array(
-                "message" => "Success ",
-                "jwt" => $jwt,
-                "mno"=>$row['u_mno']
+                "Message" => "Success ",
+                "jwt" => $jwt
+                // "mno"=>$row['u_mno']
                 
             ));
     
@@ -34,6 +35,7 @@ if ($checkMno != 0) {
     $Message = "No account yet ";
     $response[] = array("Message" => $Message);
 }
+    // $res[]= array("jwt"=> $jwt);
 
 echo json_encode($response);
 ?>
