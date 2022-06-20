@@ -9,7 +9,7 @@ require "../vendor/autoload.php";
     if($rows!=0){ 
         $row = mysqli_fetch_assoc($q);
         $user_id=$row['user_id'];
-        $user_name=$row['user_name];
+        $user_name=$row['user_name'];
         $user_pic=$row['user_pic'];
         $email=$row['email'];
         $gen=$row['gen'];
