@@ -40,11 +40,11 @@
     $allowTypes = array('jpg','png','jpeg');
     $allowTypes2 = array('jpg','png','jpeg','pdf');
 
-    $SQL1 = "SELECT * FROM registers WHERE userid = '$drid'";
+    $SQL1 = "SELECT * FROM doctor WHERE userid = '$drid'";
     $exeSQL1 = mysqli_query($conn, $SQL1);
     $checkuname =  mysqli_num_rows($exeSQL1);
 
-    $SQL2 = "SELECT * FROM registers WHERE mobile = '$drmno'";
+    $SQL2 = "SELECT * FROM doctor WHERE mobile = '$drmno'";
     $exeSQL2 = mysqli_query($conn, $SQL2);
     $checkmno =  mysqli_num_rows($exeSQL2);
     if($checkuname!=0){ 
@@ -71,7 +71,7 @@
             move_uploaded_file($_FILES["edu_cert"]["tmp_name"], $edu_certFilePath)
             // &&            move_uploaded_file($_FILES["exp_cert"]["tmp_name"], $exp_certFilePath)
             ){
-                if(isset( $_FILES['exp_cert']['name'])){
+                if(isset($exp_cert)){
                     if(in_array($exp_certfileType, $allowTypes2) && move_uploaded_file($_FILES["exp_cert"]["tmp_name"], $exp_certFilePath) ){
 
                         $insertdata = mysqli_query($conn, $sql);
@@ -88,7 +88,7 @@
                     `location`, `qualification`, `experience`, `specialist`, `description`, `govt_id`, `edu_cert`) 
                    VALUES ('$drname','$drid','$drpass','$dremail','$drmno','$drgen','$profpicURL','$drage',
                    '$drloca','$quali','$exp','$spec','$desc','$govt_idURL','$edu_certURL')";
-                   $intdata = mysqli_query($conn, $sqlwithoutexp);
+                   $intdata = mysqli_query($conn, $sqlwithoutexpl);
                    if($intdata){
                     $Message ="Data Entered successfully";
                 }else{
