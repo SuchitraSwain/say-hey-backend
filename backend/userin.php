@@ -27,12 +27,12 @@
     $SQL = "SELECT * FROM users WHERE mobile_no = '$mobile_no'";
     $exeSQL = mysqli_query($conn, $SQL);
     $checkmno =  mysqli_num_rows($exeSQL);
-    if($){ 
+    if($checkmno){ 
         $Message = "mobile number already exists";
          }else{
 
         INSERT INTO `users`( `user_name`, `mobile_no`, `user_pic`, `email`, `pass`, `gender`, `age`, `prev_med_rec`, `session_no`) 
-          VALUES ('$user_name','$mobile_no','$profpicURL','$email','$pass','$gen','$age','$pmrURL','$session_no')
+          VALUES ('$user_name','$mobile_no','$profpicURL','$email','$pass','$gen','$age','$pmrURL','$session_no');
         if(in_array($prof_picfileType, $allowTypes) && in_array($pmr_fileType, $allowTypes2))
         {
             if(move_uploaded_file($_FILES["prof_pic"]["tmp_name"], $profpicFilePath) && move_uploaded_file($_FILES["prev_med_rec"]["tmp_name"], $pmr_FilePath))
