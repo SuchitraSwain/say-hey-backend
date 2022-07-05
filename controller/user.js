@@ -1,17 +1,22 @@
 const mongoose = require('mongoose');
 const userSchema = require('../models/user')
+const userRecordSchema = require('../models/userRecord')
+
 const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const { records } = require('../middleware/multer');
 
 const updateData = async (req,res)=>{
    const{id}= req.params;
    const image = req.file;
 //    res.send(typeof(id))
     try {
-        // if(!image){
-        //     res.send("file not uploaded")
-        // }
-        // res.send(image.filename);
+        if(!image){
+            res.send("file not uploaded")
+        }
+        res.send(image.filename);
         const updateduser = await userSchema.updateOne(
          {u_mno: id},
          {$set:{
@@ -19,7 +24,7 @@ const updateData = async (req,res)=>{
              lname: req.body.lname,
              u_email:req.body.email,
              u_pass:req.body.password,
-            //  user_prof:image.filename
+             user_prof:image.filename
          }}
         );
         res.json({status:"updated"});
@@ -36,9 +41,9 @@ const createUser = async (req,res)=>{
         fname : name[0],
         lname: name[1],
         u_email:req.body.email,
-        // u_mno:req.body.mno,
-        // u_pass:req.body.password,
-        // user_prof:req.body.profile
+        u_mno:req.body.mno,
+        u_pass:req.body.password,
+        user_prof:req.body.profile,
         refreshToken:req.body.stsTokenManager.refreshToken,
         accessToken: req.body.stsTokenManager.accessToken,
         uid:req.body.uid,
@@ -60,6 +65,31 @@ const createUser = async (req,res)=>{
 
     // res.status(200).send("working fine")
 }
+
+function ValidateEmail(mail) 
+{
+ if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+  {
+    return (true)
+  }
+    return (false)
+}
+
+const getUser= async (req,res)=>{
+    // let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+    const {id} = req.params;
+    try {
+        const data= await userSchema.findOne(ValidateEmail(id) ? {"u_email":id}:{"u_mno":id} );
+        let jwtSecretKey = data.accessToken;
+        const token = jwt.sign({data}, jwtSecretKey);
+
+        res.status(200).send(token);
+    } catch (error) {
+        console.log(error);
+        res.json({message: error});
+    }
+}
+
 const viewUser = async (req,res)=>{
     try {
         const data= await userSchema.find();
@@ -69,4 +99,42 @@ const viewUser = async (req,res)=>{
     }
 }
 
-module.exports = {updateData,viewUser,createUser};
+const addrecords =  async (req,res)=>{
+    const {id} = req.params;
+    const files = req.files;
+    // res.json(files);
+    try {
+        // const data= await userSchema.findOne(ValidateEmail(id) ? {"u_email":id}:{"u_mno":id} );
+        // if(!files){
+        //     res.send("no files");
+    
+        // }
+        var imageArr= [];
+        var fileArr=[];
+        files.forEach(element => {
+            if(element.fieldname=== 'image'){
+                imageArr.push(element.filename)
+
+                }
+                if(element.fieldname=== 'record'){
+                    fileArr.push(element.filename)
+                }
+            }
+        );
+        const recordSchema= new userRecordSchema({
+            uid: id,
+            image:imageArr,
+            medical_files:fileArr
+        }) ;
+        await recordSchema.save()
+        res.status(201).send('Files Uploaded Successfully');
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send(error);
+
+    }
+    // res.status(200).send("njds");
+}
+
+module.exports = {updateData,viewUser,createUser,getUser,addrecords};
