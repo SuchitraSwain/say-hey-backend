@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const doctorSchema = require('../models/doctor')
 
 
@@ -38,6 +37,10 @@ const createDoc = async (req,res)=>{
             experience: req.body.experience,
             specialist: req.body.specialist,
             decription: req.body.decription,
+            rating: req.body.rating,
+            price: req.body.price,
+            language: req.body.language,
+            timing: req.body.timing,
             doc_prof: profArr,
             doc_govtid: govtidArr,
             doc_educert:educertArr,
@@ -88,6 +91,9 @@ const statAct =async (req,res)=>{
      }
  
  }
+
+
+ 
  
 
 

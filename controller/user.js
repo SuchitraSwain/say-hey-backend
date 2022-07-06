@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 const updateData = async (req,res)=>{
    const{id}= req.params;
    const image = req.file;
-//    res.send(typeof(id))
     try {
         if(!image){
             res.send("file not uploaded")

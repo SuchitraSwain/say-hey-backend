@@ -1,6 +1,7 @@
 const doctorSchema = require('../models/doctor')
 
 
+
 const viewdoctor = async (req,res)=>{
     try {
         const data= await doctorSchema.find();
@@ -34,4 +35,15 @@ const activedoc =async (req,res)=>{
     }
 }
 
-module.exports ={viewdoctor,getdoc,activedoc}
+const docRank = async(req,res)=>{
+    try {
+        const data= await doctorSchema.find().sort({rating:-1})
+        res.status(200).send(data);
+    } catch (error) {
+        console.log(error);
+        res.json({message: error});
+    }
+
+}
+
+module.exports ={viewdoctor,getdoc,activedoc,docRank}
