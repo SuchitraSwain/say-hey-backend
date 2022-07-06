@@ -1,11 +1,14 @@
 const express = require('express')
 const router = express.Router();
-const multer  = require('multer')
-const upload = require('../middleware/multer');
-const {updateData,createUser,viewUser}=  require('../controller/doctor')
+
+const {docFile} = require('../middleware/docMulter');
+const {createDoc,statAct,statnotAct}=  require('../controller/doctor')
 
 
-router.route('/').post(createUser).get(viewUser);
-router.put('/:id', upload.single('image'),updateData);
+router.post('/addDoc',docFile.any(),createDoc)
+router.put('/statAct/:id',statAct)
+router.put('/statnotAct/:id',statnotAct)
+// .get(viewUDoc);
+// router.put('/:id', upload.single('image'),updateData);
 
 module.exports = router;

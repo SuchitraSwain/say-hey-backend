@@ -1,12 +1,10 @@
-const mongoose = require('mongoose');
+
 const userSchema = require('../models/user')
 const userRecordSchema = require('../models/userRecord')
 
-const multer  = require('multer')
-const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
-const { records } = require('../middleware/multer');
+
+
 
 const updateData = async (req,res)=>{
    const{id}= req.params;
@@ -48,13 +46,6 @@ const createUser = async (req,res)=>{
         accessToken: req.body.stsTokenManager.accessToken,
         uid:req.body.uid,
     })
-    // user.save()
-    // .then(data=>{
-    //     res.status(200).json(data);
-    // })
-    // .catch(err=>{
-    //     res.json({message: err});
-    // })
     try {
         const savedUser = await user.save();
         res.json(savedUser);
@@ -63,7 +54,7 @@ const createUser = async (req,res)=>{
         
     }
 
-    // res.status(200).send("working fine")
+
 }
 
 function ValidateEmail(mail) 
@@ -76,7 +67,7 @@ function ValidateEmail(mail)
 }
 
 const getUser= async (req,res)=>{
-    // let tokenHeaderKey = process.env.TOKEN_HEADER_KEY;
+
     const {id} = req.params;
     try {
         const data= await userSchema.findOne(ValidateEmail(id) ? {"u_email":id}:{"u_mno":id} );
@@ -90,6 +81,8 @@ const getUser= async (req,res)=>{
     }
 }
 
+
+
 const viewUser = async (req,res)=>{
     try {
         const data= await userSchema.find();
@@ -102,13 +95,8 @@ const viewUser = async (req,res)=>{
 const addrecords =  async (req,res)=>{
     const {id} = req.params;
     const files = req.files;
-    // res.json(files);
+
     try {
-        // const data= await userSchema.findOne(ValidateEmail(id) ? {"u_email":id}:{"u_mno":id} );
-        // if(!files){
-        //     res.send("no files");
-    
-        // }
         var imageArr= [];
         var fileArr=[];
         files.forEach(element => {
@@ -134,7 +122,7 @@ const addrecords =  async (req,res)=>{
         res.status(400).send(error);
 
     }
-    // res.status(200).send("njds");
+
 }
 
 module.exports = {updateData,viewUser,createUser,getUser,addrecords};
