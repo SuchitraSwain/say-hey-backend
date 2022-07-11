@@ -1,11 +1,42 @@
-const doctorSchema = require('../models/doctor')
+const doctorSchema = require('../models/doctor');
+const { all } = require('../routes/doctor');
 
 
 
 const viewdoctor = async (req,res)=>{
+    console.log(req.query)
+    const{type,language,gender}= req.query
     try {
-        const data= await doctorSchema.find();
-        res.status(200).json({data});
+        if(type && language && gender) {
+            const data= await doctorSchema.find({gender:gender,specialist:type,language:language});
+            res.status(200).json({data});    
+        }
+        else if(type && language && gender) {
+            const data= await doctorSchema.find({gender:gender,specialist:type,language:language});
+            res.status(200).json({data});    
+        }
+        else if(gender && type) {
+            const data= await doctorSchema.find({gender:gender,specialist:type});
+            res.status(200).json({data});    
+        }else if(gender&& language) {
+            const data= await doctorSchema.find({gender:gender,language:language});
+            res.status(200).json({data});    
+        }
+        else if(type){
+            const data= await doctorSchema.find({specialist:type});
+            res.status(200).json({data});
+        }else if (language) {
+            const data= await doctorSchema.find({language:language});
+            res.status(200).json({data});
+        } else if(gender) {
+            const data= await doctorSchema.find({gender:gender});
+            res.status(200).json({data});    
+        }
+        else{
+            const data= await doctorSchema.find();
+            
+            res.status(200).json({data});    
+        }
     } catch (error) {
         res.json({message: error});
     }

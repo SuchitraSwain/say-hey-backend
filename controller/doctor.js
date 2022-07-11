@@ -4,25 +4,50 @@ const doctorSchema = require('../models/doctor')
 const createDoc = async (req,res)=>{
     const {doc_id} = req.body;
     const files = req.files;
-    var profArr= [];
-    var govtidArr=[];
-    var educertArr=[];
-    var expcertArr=[];
+    const langArr = [];
+    const profArr= [];
+    const govtidArr=[];
+    const educertArr=[];
+    const expcertArr=[];
         files.forEach(element => {
             if(element.fieldname=== 'doc_prof'){
-                profArr.push(element.filename)
+                const profile = {
+                    filename:element.filename,
+                    path: element.path,
+                    size: element.size
+                }
+                profArr.push(profile)
 
             }else if (element.fieldname ==='doc_govtid') {
-                govtidArr.push(element.filename)
+                const govtid = {
+                    filename:element.filename,
+                    path: element.path,
+                    size: element.size
+                }
+                govtidArr.push(govtid)
             } else if(element.fieldname ==='doc_educert') {
-                educertArr.push(element.filename)
+                const eduCert = {
+                    filename:element.filename,
+                    path: element.path,
+                    size: element.size
+                }
+                educertArr.push(eduCert)
             }
             else if(element.fieldname ==='doc_expcert') {
-                expcertArr.push(element.filename)
+                const expCert = {
+                    filename:element.filename,
+                    path: element.path,
+                    size: element.size
+                }
+                expcertArr.push(expCert)
             }
                 
             }
-        );
+            );
+            // console.log(files);
+        req.body.language.forEach(c=>{
+            langArr.push(c)
+        })
         const doctor= new doctorSchema({
             doc_id: doc_id,
             doc_name: req.body.name,
@@ -39,8 +64,7 @@ const createDoc = async (req,res)=>{
             decription: req.body.decription,
             rating: req.body.rating,
             price: req.body.price,
-            language: req.body.language,
-            timing: req.body.timing,
+            language: langArr,
             doc_prof: profArr,
             doc_govtid: govtidArr,
             doc_educert:educertArr,
@@ -48,7 +72,7 @@ const createDoc = async (req,res)=>{
         }) ;
         try {
             const savedDoc = await doctor.save();
-        res.json(savedDoc);
+            res.json(savedDoc);
         } catch (error) {
             res.json({message:error})
         }
@@ -91,6 +115,25 @@ const statAct =async (req,res)=>{
      }
  
  }
+
+
+// const addSlots = async(req,res)=>{
+//     const {id} = req.params;
+//     try {
+//         const timeslot = req.body.timeslot;
+//         const updateDocument = {
+//             $push: { "slots.$[].date": Date() }
+//         };
+//         const data= await doctorSchema.updateOne({"doc_id":id},updateDocument);
+
+//         res.json(data);
+//     } catch (error) {
+//         console.log(error)  
+//         res.json({message: error})
+
+//     }
+
+// }
 
 
  

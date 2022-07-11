@@ -9,8 +9,11 @@ const userSchema = mongoose.Schema({
   accessToken: { type: String, require: true },
   uid: { type: String, require: true },
   u_pass:{type:String,require: true},
-  medical_files:{  type:Array},
-  user_prof: String
+  
+  user_prof: String,
+  appointments:[],
+  cardDetails:[Object],
+  
 });
 
 module.exports = mongoose.model("user", userSchema);

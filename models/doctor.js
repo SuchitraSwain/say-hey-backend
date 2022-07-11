@@ -12,8 +12,15 @@ const doctorSchema = mongoose.Schema({
   status: {type: String,require:true,default: "not active"},
   rating: Number,
     price: Number,
-    language: String,
-    timing: String,
+    language:[],
+    slots:[{
+      date: Date,
+      avilability: {
+        type:Boolean,
+        default: true
+      }
+    }],
+    appointments:[],
   qualification: { type: String, require: true },
   experience: { type: String, require: true },
   specialist: { type: String, require: true },

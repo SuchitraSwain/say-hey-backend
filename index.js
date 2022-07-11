@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const user = require('./routes/user');
 const doc = require('./routes/doctor');
 const home = require('./routes/homeapi');
+const book = require('./routes/appointment');
 
 
 app.use(express.urlencoded({extended:false}));
@@ -23,9 +24,27 @@ mongoose.connect(url,
   ()=>{console.log('connected to db')}
 );
 
+
+var Calendly = require('node-calendly-sdk')
+ 
+calendly_client = new Calendly("S6OE4W3VIYJQDWJJXDOJFTDYWJWIR3SX")
+ 
+// Create a webhook
+calendly_client.webhooks.create("https://mycallbackurl.com/event_types")
+    .then(function(result) {
+        console.log(JSON.stringify(result, "\t", null))
+        /**
+            {
+                "id": <hook_id>
+            }
+        */
+    }).catch((err) => console.log(err));
+
+
 app.use('/api/user',user);
 app.use('/api/doctor',doc);
 app.use('/api/home',home);
+app.use('/api/book',book);
 
 
 app
