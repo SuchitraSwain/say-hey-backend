@@ -3,7 +3,14 @@ const fs = require('fs')
 
 const user_image =multer.diskStorage({
     destination: function(req,res,cb){
-        cb(null,'uploads/image');
+      const {id } = req.params
+      var dir = `./uploads/${id}`
+      fs.exists(dir, exist => {
+        if (!exist) {
+          return fs.mkdir(dir, error => cb(error, dir))
+        }
+        return cb(null, dir)
+      })
     },
     filename: (req,file,cb)=>{
         const ext = file.originalname.substr(file.originalname.lastIndexOf("."));
