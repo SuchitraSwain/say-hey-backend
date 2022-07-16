@@ -11,6 +11,7 @@ const API_KEY = process.env.YOUR_HUBSPOT_API_KEY
 
 var http = require("https");
 const e = require("express");
+const { read } = require("fs")
 
 const getEngagement = async (userid,email) => {
   var options = {
@@ -34,20 +35,21 @@ const getEngagement = async (userid,email) => {
       var body = Buffer.concat(chunks);
       const parsed =  JSON.parse(body.toString()).results
       try {
-        const userdata = await userSchema.findOneAndUpdate(
-          {u_email:email},
-          {$set:{
-            appointments: []
-          }}
-          )
-        console.log(userdata);
+        
+        
         if(parsed){
+          await userSchema.findOneAndUpdate(
+            {u_email:email},
+            {$set:{
+              appointments: []
+            }}
+            )
           
           var docemails 
             parsed.forEach( async (element) => {
+              const owner =  element.engagement.ownerId
+              docemails = await docdetails(owner)
             
-            const owner =  element.engagement.ownerId
-            docemails = await docdetails(owner,email)
             const docdata1 = await doctorSchema.findOne({doc_email:docemails})
               await userSchema.findOneAndUpdate(
               {u_email:email},
@@ -55,10 +57,12 @@ const getEngagement = async (userid,email) => {
                 appointments: {...element,docdata1}
               }}
               )
+             
           });
           
           
         }
+       
         
       } catch (error) {
         console.log(error)
@@ -66,10 +70,11 @@ const getEngagement = async (userid,email) => {
 
     });
   });
+  
   req.end()
 }
 
-const docdetails =async (owner,email)=>{
+const docdetails =async (owner)=>{
   var options = {
     method: 'GET',
     url: `https://api.hubapi.com/owners/v2/owners/${owner}`,
@@ -78,7 +83,9 @@ const docdetails =async (owner,email)=>{
   var doc_email
   
   const req = await axios.get(`https://api.hubapi.com/owners/v2/owners/${owner}?hapikey=${process.env.YOUR_HUBSPOT_API_KEY}`) 
+  
   return req.data.email;
+
   
 
 
@@ -87,7 +94,7 @@ const docdetails =async (owner,email)=>{
 
 
 
-const getuserID = (email) => {
+const getuserID = async (email) => {
 
   var request = require("request");
 
@@ -97,10 +104,10 @@ const getuserID = (email) => {
     qs: { hapikey: API_KEY }
   }
 
-  request(options, function (error, response, body) {
+  request(options, async (error, response, body)=> {
     if (error) throw new Error(error);
     const parsed = JSON.parse(body)
-    getEngagement(parsed.vid,email)
+     await getEngagement(parsed.vid,email)
     
   });
 

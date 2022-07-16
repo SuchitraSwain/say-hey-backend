@@ -41,9 +41,7 @@ const updateData = async (req,res)=>{
          {$set:{
              fname : req.body.fname,
              lname: req.body.lname,
-             u_email:req.body.email,
-             u_pass:req.body.password,
-             user_prof:req.body.filename
+             user_prof:image.filename
          }}
         );
         res.json({status:"updated"});
