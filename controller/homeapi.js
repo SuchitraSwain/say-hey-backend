@@ -77,29 +77,4 @@ const docRank = async(req,res)=>{
 
 }
 
-const search = async (req,resp)=>{
-//      const query = { $text: { $search: "trek" } };
-//   // Return only the `title` of each matched document
-//   const projection = {
-//     _id: 0,
-//     title: 1,
-//   };
-
-    let data = await doctorSchema.find(
-        {
-            "$or":[
-                
-                {doc_name:{$regex:req.params.key, $options: 'i'}},
-                {qualification:{$regex:req.params.key, $options: 'i'}},
-                {specialist:{$regex:req.params.key, $options: 'i'}}
-
-                
-            
-            ]
-        }
-    )
-    resp.send(data);
-
-}
-
-module.exports ={viewdoctor,getdoc,activedoc,docRank,search}
+module.exports ={viewdoctor,getdoc,activedoc,docRank}

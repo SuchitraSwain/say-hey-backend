@@ -18,7 +18,7 @@ app.use(express.json());
 
 
 
-const url =`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.iwhcj.mongodb.net/sayhey`;
+const url ='mongodb+srv://sayheyofficial21:Sayhey2021@cluster0.iwhcj.mongodb.net/sayhey';
 mongoose.connect(url, 
   { useNewUrlParser: true},
   ()=>{console.log('connected to db')}
