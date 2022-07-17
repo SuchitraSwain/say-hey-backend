@@ -10,7 +10,8 @@ const meet = require('./routes/meet');
 const user = require('./routes/user');
 const doc = require('./routes/doctor');
 const home = require('./routes/homeapi');
-const book = require('./routes/appointment');
+const payment = require('./routes/payment');
+
 
 
 app.use(express.urlencoded({extended:false}));
@@ -30,13 +31,13 @@ mongoose.connect(url,
       
 
 
-      
 
 app.use('/api/meet',meet);
 app.use('/api/user',user);
 app.use('/api/doctor',doc);
 app.use('/api/home',home);
-app.use('/api/book',book);
+app.use('/api/payment',payment);
+
 
 
 app
