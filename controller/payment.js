@@ -37,18 +37,31 @@ const createorder= async(req,res) =>{
                 console.log(err);
                 res.json({err})
             }else{
-
-                const userdata = await userSchema.findOne({"uid":req.body.user})
-                // const userdata1 = await userdata.find({"uid":req.body.user},{awards: {$elemMatch: {appointments:'Turing Award', year:1977}}})
-
-                        
-                        const payment = await  new paymentSchema({
+                userSchema.findOne({"uid":req.body.user_id}).then((value)=>{
+                        const payment = paymentSchema({
                             engagment_id: params.engagment_id,
-                            user_id: userdata._id,
-                            order: order
+                            user_id: value._id,
+                            order: order,
+                            paymentVerify:false
                         })
-                        const savedpay = await  payment.save()
-                        res.json(savedpay)
+                        payment.save().then((saved_payment)=>{
+                            res.json(saved_payment)
+                        }).catch((err)=>{
+                            console.log(err)
+                        })  
+                }).catch((err)=>{
+                    res.json(err)
+                    console.log(err);
+                })
+                // const userdata1 = await userdata.find({"uid":req.body.user},{awards: {$elemMatch: {appointments:'Turing Award', year:1977}}})
+                        // console.log(userdata)
+                        // const payment = await  new paymentSchema({
+                        //     engagment_id: params.engagment_id,
+                        //     user_id: userdata._id,
+                        //     order: order
+                        // })
+                        // const savedpay = await  payment.save()
+                        // res.json(savedpay)
             }
            // res.send({sub:data, status:"success"})\
                    
@@ -80,6 +93,7 @@ const verifyorder= async(req,res) =>{
         console.log(req.body.eng_id);
         try {
             const data =await paymentSchema.findOne({engagment_id:req.body.eng_id})
+            paymentSchema.updateOne({engagment_id:req.body.eng_id},{$set:{paymentVerify:true}})  
             const uid = data.user_id;
             const userdata = await userSchema.updateOne({
                 _id:uid,
@@ -93,6 +107,7 @@ const verifyorder= async(req,res) =>{
             {
                 $set:{
                     "appointments.$.payment": true
+                    
                 }
             }
             )

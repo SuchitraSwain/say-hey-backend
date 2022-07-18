@@ -2,6 +2,8 @@ require("dotenv").config();
 const doctorSchema = require("./models/doctor");
 const userSchema = require("./models/user");
 var request = require("request");
+const paymentSchema = require('./models/payment');
+
 var axios = require("axios");
 
 const API_KEY = process.env.YOUR_HUBSPOT_API_KEY;
@@ -30,16 +32,8 @@ const getEngagement = (userid, email, res) => {
     )
     .then((value) => {
       if (value.data.results) {
-        // userSchema
-        //   .findOneAndUpdate(
-        //     { u_email: email },
-        //     {
-        //       $set: {
-        //         appointments: [],
-        //       },
-        //     }
-        //   )
-        //   .then(() => {
+        
+        
         var array = [];
         value.data.results.map((item, index) => {
           const owner = item.engagement.ownerId;
@@ -49,18 +43,40 @@ const getEngagement = (userid, email, res) => {
                 doc_email: docemails,
               })
               .then((docdata1) => {
-                // userSchema.findOneAndUpdate(
-                //   { u_email: email },
-                //   {
-                //     $push: {
-                //       appointments: { ...item, docdata1 },
-                //     },
-                //   }
-                // ).then(()=>{
-                array.push({ ...item, docdata1,payment: false });
-                // console.log(array);
-                // res.json(array)
-                // })
+                console.log(item.engagement.id);
+                var pay = false
+                paymentSchema.findOne({
+                  engagment_id: item.engagement.id,
+                  paymentVerify:true
+              }).then((paydata)=> {
+                if(paydata){
+                  console.log(paydata.user_id);
+                  pay= true
+                  array.push({ ...item, docdata1,payment: pay });
+                  console.log(array)
+                  // userSchema
+                  //  .updateOne({
+                  //   u_email: email,
+                  //   appointments: {
+                  //       '$elemMatch': {
+                  //           // payment :true
+                  //         'engagement.id': parseFloat(item.engagement.id)
+                  //       }
+                  //     }
+                  // },
+                  // {
+                  //     $set:{
+                  //         "appointments.$.payment": true
+                          
+                  //     }
+                  // })
+                  // .then((dar)=>console.log(dar))
+
+                }
+                else{
+                  array.push({ ...item, docdata1,payment: pay });
+
+                }
               })
               .then(() => {
                 if (value.data.results.length == array.length) {
@@ -78,11 +94,14 @@ const getEngagement = (userid, email, res) => {
                     });
                 }
               })
+              })
+              
               .catch((err)=>{
                 res.json({err})
               })
-          });
-        });
+          })
+          
+        })
 
         // })
       }
