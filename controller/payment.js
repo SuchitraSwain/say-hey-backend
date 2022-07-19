@@ -45,6 +45,7 @@ const createorder= async(req,res) =>{
                             paymentVerify:false
                         })
                         payment.save().then((saved_payment)=>{
+                            console.log(saved_payment)
                             res.json(saved_payment)
                         }).catch((err)=>{
                             console.log(err)
@@ -93,8 +94,9 @@ const verifyorder= async(req,res) =>{
         console.log(req.body.eng_id);
         try {
             const data =await paymentSchema.findOne({engagment_id:req.body.eng_id})
-            paymentSchema.updateOne({engagment_id:req.body.eng_id},{$set:{paymentVerify:true}})  
+            await paymentSchema.updateOne({engagment_id:req.body.eng_id},{$set:{paymentVerify:true}})  
             const uid = data.user_id;
+            console.log(uid)
             const userdata = await userSchema.updateOne({
                 _id:uid,
                 appointments: {
@@ -117,7 +119,7 @@ const verifyorder= async(req,res) =>{
 
             }
         } catch (error) {
-            
+            console.log(error)
         }
 
 

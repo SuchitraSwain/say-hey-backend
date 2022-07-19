@@ -2,11 +2,10 @@
 const express = require('express')
 const router = express.Router();
 
-const {bookAppointment,appointmentDetails,daleteAppoint}=  require('../controller/appointment');
-const { route } = require('./doctor');
+const {docData}=  require('../controller/appointment');
 
-router.post('/',bookAppointment);
-router.get("/getdetails/:id",appointmentDetails);
-router.delete("/deleteAppointment/:id",daleteAppoint)
+
+router.get('/doctor',docData);
+
 
 module.exports = router;

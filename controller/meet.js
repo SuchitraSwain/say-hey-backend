@@ -9,8 +9,6 @@ const getmeetdet = async (req,res)=>{
         const hub = hubspot.getuserID(email)
         hub.then((value)=>{
           hubspot.getEngagement(value,email,res)
-          
-          
         })
         
        
