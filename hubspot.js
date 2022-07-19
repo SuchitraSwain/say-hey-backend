@@ -2,10 +2,11 @@ require("dotenv").config();
 const doctorSchema = require("./models/doctor");
 const userSchema = require("./models/user");
 var request = require("request");
+const paymentSchema = require("./models/payment");
+
 var axios = require("axios");
 
 const API_KEY = process.env.YOUR_HUBSPOT_API_KEY;
-
 var http = require("https");
 const e = require("express");
 const { read } = require("fs");
@@ -31,16 +32,6 @@ const getEngagement = (userid, email, res) => {
     )
     .then((value) => {
       if (value.data.results) {
-        // userSchema
-        //   .findOneAndUpdate(
-        //     { u_email: email },
-        //     {
-        //       $set: {
-        //         appointments: [],
-        //       },
-        //     }
-        //   )
-        //   .then(() => {
         var array = [];
         value.data.results.map((item, index) => {
           const owner = item.engagement.ownerId;
@@ -50,34 +41,59 @@ const getEngagement = (userid, email, res) => {
                 doc_email: docemails,
               })
               .then((docdata1) => {
-                // userSchema.findOneAndUpdate(
-                //   { u_email: email },
-                //   {
-                //     $push: {
-                //       appointments: { ...item, docdata1 },
-                //     },
-                //   }
-                // ).then(()=>{
-                array.push({ ...item, docdata1 });
-                // console.log(array);
-                // res.json(array)
-                // })
+                console.log(item.engagement.id);
+                var pay = false;
+                paymentSchema
+                  .findOne({
+                    engagment_id: item.engagement.id,
+                  })
+                  .then((paydata) => {
+                    console.log('paydata\n',paydata)
+                    if (paydata) {
+                      console.log(paydata.user_id);
+                      pay = true;
+                      array.push({ ...item, docdata1, payment: paydata.paymentVerify });
+                      // userSchema
+                      //  .updateOne({
+                      //   u_email: email,
+                      //   appointments: {
+                      //       '$elemMatch': {
+                      //           // payment :true
+                      //         'engagement.id': parseFloat(item.engagement.id)
+                      //       }
+                      //     }
+                      // },
+                      // {
+                      //     $set:{
+                      //         "appointments.$.payment": true
+
+                      //     }
+                      // })
+                      // .then((dar)=>console.log(dar))
+                    } else {
+                      array.push({ ...item, docdata1, payment: false });
+                    }
+                  })
+                  .then(() => {
+                    if (value.data.results.length == array.length) {
+                      userSchema
+                        .findOneAndUpdate(
+                          { u_email: email },
+                          {
+                            $set: {
+                              appointments: array,
+                            },
+                          }
+                        )
+                        .then((value) => {
+                          res.json(value);
+                        });
+                    }
+                  });
               })
-              .then(() => {
-                if (value.data.results.length == array.length) {
-                  userSchema
-                    .findOneAndUpdate(
-                      { u_email: email },
-                      {
-                        $set: {
-                          appointments: array,
-                        },
-                      }
-                    )
-                    .then((value) => {
-                      res.json(value);
-                    });
-                }
+
+              .catch((err) => {
+                res.json({ err });
               });
           });
         });
@@ -85,9 +101,9 @@ const getEngagement = (userid, email, res) => {
         // })
       }
     })
-    .catch((err)=>{
-      res.json(err)
-    })
+    .catch((err) => {
+      res.json(err);
+    });
   // var req = http.request(options, async (res) => {
   //   var chunks = [];
 
@@ -140,15 +156,18 @@ const docdetails = async (owner) => {
   var options = {
     method: "GET",
     url: `https://api.hubapi.com/owners/v2/owners/${owner}`,
-    qs: { hapikey: process.env.YOUR_HUBSPOT_API_KEY },
+    qs: { hapikey: API_KEY },
   };
   var doc_email;
+  try {
+    const req = await axios.get(
+      `https://api.hubapi.com/owners/v2/owners/${owner}?hapikey=${API_KEY}`
+    );
 
-  const req = await axios.get(
-    `https://api.hubapi.com/owners/v2/owners/${owner}?hapikey=${process.env.YOUR_HUBSPOT_API_KEY}`
-  );
-
-  return req.data.email;
+    return req.data.email;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getuserID = async (email) => {
@@ -159,11 +178,14 @@ const getuserID = async (email) => {
     url: `https://api.hubapi.com/contacts/v1/contact/email/${email}/profile`,
     qs: { hapikey: API_KEY },
   };
-
-  const value = await axios.get(
-    `https://api.hubapi.com/contacts/v1/contact/email/${email}/profile?hapikey=${process.env.YOUR_HUBSPOT_API_KEY}`
-  );
-  return value.data.vid;
+  try {
+    const value = await axios.get(
+      `https://api.hubapi.com/contacts/v1/contact/email/${email}/profile?hapikey=${API_KEY}`
+    );
+    return value.data.vid;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = { getuserID, getEngagement };

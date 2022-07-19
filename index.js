@@ -10,7 +10,8 @@ const meet = require('./routes/meet');
 const user = require('./routes/user');
 const doc = require('./routes/doctor');
 const home = require('./routes/homeapi');
-const book = require('./routes/appointment');
+const payment = require('./routes/payment');
+
 
 
 app.use(express.urlencoded({extended:false}));
@@ -18,7 +19,7 @@ app.use(express.json());
 
 
 
-const url ='mongodb+srv://sayheyofficial21:Sayhey2021@cluster0.iwhcj.mongodb.net/sayhey';
+const url =`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.iwhcj.mongodb.net/sayhey`;
 mongoose.connect(url, 
   { useNewUrlParser: true},
   ()=>{console.log('connected to db')}
@@ -30,13 +31,13 @@ mongoose.connect(url,
       
 
 
-      
 
 app.use('/api/meet',meet);
 app.use('/api/user',user);
 app.use('/api/doctor',doc);
 app.use('/api/home',home);
-app.use('/api/book',book);
+app.use('/api/payment',payment);
+
 
 
 app
